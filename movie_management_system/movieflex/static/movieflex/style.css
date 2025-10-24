@@ -68,6 +68,17 @@ body {
     color: #000 !important;
 }
 
+/* Ensure success buttons keep white text even for anchor tags */
+.btn-success,
+a.btn-success {
+    color: #fff !important;
+}
+
+.btn-success:hover,
+a.btn-success:hover {
+    color: #fff !important;
+}
+
 /* Forms */
 .form-control {
     background-color: #1a1a1a !important;

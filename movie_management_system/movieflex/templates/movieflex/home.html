@@ -1,6 +1,7 @@
 {% extends 'movieflex/base.html' %}
 {% load static %}
 {% block title %}Home - MovieFlex{% endblock %}
+ 
 
 {% block content %}
 <style>
@@ -51,11 +52,77 @@
     </div>
 
     <div class="hero-content">
-        <h1 class="display-3 mb-3">Welcome to <strong>MovieFlex</strong></h1>
+        <h1 class="display-3 mb-3"><span id="type1"></span><br><strong><span id="type2"></span></strong></h1>
         <p class="lead mb-4">Browse movies, select showtimes, and book your tickets instantly!</p>
         <a href="{% url 'movie_list' %}" class="btn btn-primary btn-lg">Explore Movies</a>
     </div>
 </div>
+
+<script>
+const t1 = "Welcome to ";
+const t2 = "MovieFlex";
+const SPEED1 = 60;     // typing speed for line 1
+const SPEED2 = 80;     // typing speed for line 2
+const DEL = 40;        // deletion speed
+const PAUSE = 900;     // pause after full type/delete
+
+let i = 0, j = 0;      // indices for t1, t2
+let phase = 'type1';   // phases: type1 -> type2 -> pause -> del2 -> del1 -> pause -> repeat
+
+function loopType() {
+  const el1 = document.getElementById('type1');
+  const el2 = document.getElementById('type2');
+  if (!el1 || !el2) return;
+
+  switch (phase) {
+    case 'type1':
+      if (i < t1.length) {
+        el1.textContent += t1.charAt(i++);
+        return setTimeout(loopType, SPEED1);
+      }
+      phase = 'type2';
+      return setTimeout(loopType, 300);
+
+    case 'type2':
+      if (j < t2.length) {
+        el2.textContent += t2.charAt(j++);
+        return setTimeout(loopType, SPEED2);
+      }
+      phase = 'pause';
+      return setTimeout(loopType, PAUSE);
+
+    case 'pause':
+      phase = (j === t2.length && i === t1.length) ? 'del2' : 'type1';
+      return setTimeout(loopType, 0);
+
+    case 'del2':
+      if (j > 0) {
+        el2.textContent = el2.textContent.slice(0, -1);
+        j--;
+        return setTimeout(loopType, DEL);
+      }
+      phase = 'del1';
+      return setTimeout(loopType, 200);
+
+    case 'del1':
+      if (i > 0) {
+        el1.textContent = el1.textContent.slice(0, -1);
+        i--;
+        return setTimeout(loopType, DEL);
+      }
+      phase = 'pause';
+      return setTimeout(loopType, PAUSE);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const el1 = document.getElementById('type1');
+  const el2 = document.getElementById('type2');
+  if (el1) el1.textContent = '';
+  if (el2) el2.textContent = '';
+  loopType();
+});
+</script>
 
 <!-- Featured Movies Section -->
 <div class="container mt-5">
