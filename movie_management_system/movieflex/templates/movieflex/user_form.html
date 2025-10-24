@@ -1,0 +1,38 @@
+{% extends 'movieflex/base.html' %}
+{% block title %}Add User - MovieFlex{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Add User</h2>
+
+                {% if form.errors %}
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <form method="post" class="row g-3">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="col-12 mt-3 d-flex justify-content-between">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <a href="{% url 'user_list' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

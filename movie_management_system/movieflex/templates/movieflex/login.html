@@ -1,0 +1,48 @@
+{% extends 'movieflex/base.html' %}
+{% block title %}Login - MovieFlex{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Login</h2>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <!-- Username or Email -->
+                    <div class="mb-3">
+                        <label for="id_user" class="form-label">Username or Email</label>
+                        <input type="text" name="user" id="id_user" class="form-control" 
+                               placeholder="Enter your username or email" required>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="id_password" class="form-label">Password</label>
+                        <input type="password" name="password" id="id_password" class="form-control" 
+                               placeholder="Enter your password" required>
+                    </div>
+
+                    <div class="d-grid mb-2">
+                        <button type="submit" class="btn btn-success">Login</button>
+                    </div>
+
+                    <div class="text-center">
+                        <small>
+                            Don't have an account? <a href="{% url 'register' %}">Register here</a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

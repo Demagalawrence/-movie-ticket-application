@@ -1,0 +1,37 @@
+{% extends 'movieflex/base.html' %}
+
+{% block title %}Payment - MovieFlex{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title mb-4 text-center">Payment for {{ movie.title }}</h2>
+                
+                <ul class="list-group mb-3">
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Seats Booked:</span>
+                        <strong>{{ booking.seats_booked }}</strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total Amount:</span>
+                        <strong>${{ total_amount_dollars }}</strong>
+                    </li>
+                </ul>
+
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-success btn-lg">Pay with Stripe</button>
+                    </div>
+                </form>
+
+                <p class="mt-3 text-center text-muted">
+                    After successful payment, your ticket will be available for download.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
