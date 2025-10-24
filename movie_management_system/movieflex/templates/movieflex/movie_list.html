@@ -1,0 +1,54 @@
+{% extends 'movieflex/base.html' %}
+{% load static %}
+{% block title %}Movies - MovieFlex{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🎬 Available Movies</h2>
+    
+
+</div>
+
+<div class="row">
+    {% if movies %}
+        {% for movie in movies %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                {% if movie.poster %}
+                    <img src="{{ movie.poster }}" class="card-img-top" alt="{{ movie.title }}">
+                {% else %}
+                    <img src="{% static 'movieflex/default_poster.jpg' %}" class="card-img-top" alt="No poster available">
+                {% endif %}
+
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ movie.title }}</h5>
+                    <p class="card-text">
+                        <strong>Type:</strong> {{ movie.type }}
+                        {% if movie.duration %}
+                            | <strong>Duration:</strong> {{ movie.duration }} mins
+                        {% endif %}
+                    </p>
+
+                    {% if movie.available_seats %}
+                    <ul class="list-group list-group-flush mb-3">
+                        {% for st, seats in movie.available_seats.items %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ st }}
+                            <span class="badge bg-secondary">
+                                Seats available: {{ seats }}
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+
+                    <a href="{% url 'booking_add' movie.movie_id %}" class="btn btn-success mt-auto">Book Now</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-center">No movies available at the moment.</p>
+    {% endif %}
+</div>
+{% endblock %}

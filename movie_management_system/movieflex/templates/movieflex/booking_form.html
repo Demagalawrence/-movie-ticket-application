@@ -1,0 +1,80 @@
+{% extends 'movieflex/base.html' %}
+{% load file %}
+
+{% block content %}
+<div class="card p-4 shadow-sm">
+    <h2 class="mb-3">Book Seats for {{ movie.title }}</h2>
+
+    <form method="post" id="bookingForm">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="showtime" class="form-label">Showtime:</label>
+            {{ form.showtime|add_class:"form-select" }}
+        </div>
+
+        <h4>Select Seats:</h4>
+        <div id="seat-map" class="d-grid gap-2" style="grid-template-columns: repeat(8, 50px);">
+            {% for row in 'ABCDEFGH' %}
+                {% for col in '12345678' %}
+                    {% with seat=row|add:col %}
+                        {% with booked_list=booked_map|get_item:form.showtime.value %}
+                            <button type="button"
+                                    class="seat btn {% if seat in booked_list %}btn-danger booked{% else %}btn-success{% endif %}"
+                                    data-seat="{{ seat }}"
+                                    {% if seat in booked_list %}disabled{% endif %}>
+                                {{ seat }}
+                            </button>
+                        {% endwith %}
+                    {% endwith %}
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <input type="hidden" name="seats" id="seatsInput">
+        <br>
+        <button type="submit" class="btn btn-primary">Book</button>
+    </form>
+</div>
+
+<style>
+    .seat {
+        width: 50px;
+        height: 50px;
+        color: white;
+        font-weight: bold;
+    }
+    .seat.selected {
+        background-color: #0d6efd !important; /* blue = selected */
+    }
+    .seat.booked {
+        cursor: not-allowed;
+    }
+</style>
+
+<script>
+    const seats = document.querySelectorAll('.seat:not(.booked)');
+    const seatsInput = document.getElementById('seatsInput');
+    let selectedSeats = [];
+
+    seats.forEach(seat => {
+        seat.addEventListener('click', () => {
+            const seatCode = seat.dataset.seat;
+            if (seat.classList.contains('selected')) {
+                seat.classList.remove('selected');
+                selectedSeats = selectedSeats.filter(s => s !== seatCode);
+            } else {
+                seat.classList.add('selected');
+                selectedSeats.push(seatCode);
+            }
+            seatsInput.value = selectedSeats.join(',');
+        });
+    });
+
+    // Update seat map when showtime changes
+    const showtimeSelect = document.getElementById('id_showtime');
+    showtimeSelect.addEventListener('change', () => {
+        const selectedSeatsValue = seatsInput.value;
+        window.location.href = `${window.location.pathname}?showtime=${showtimeSelect.value}&selected=${selectedSeatsValue}`;
+    });
+</script>
+{% endblock %}

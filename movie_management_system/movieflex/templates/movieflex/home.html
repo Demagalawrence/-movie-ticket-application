@@ -1,0 +1,102 @@
+{% extends 'movieflex/base.html' %}
+{% load static %}
+{% block title %}Home - MovieFlex{% endblock %}
+
+{% block content %}
+<style>
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background: url("{% static 'movieflex/movies.webp' %}") no-repeat center center/cover;
+    height: 90vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+}
+.hero-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.65); z-index:1; }
+.hero-content { position: relative; z-index:2; max-width:700px; padding:20px; animation: fadeIn 1s ease-in-out; }
+.hero-content h1 { font-weight: bold; }
+.hero-buttons { position: absolute; top:20px; right:40px; z-index:3; }
+.hero-buttons a { margin-left:10px; border-radius:25px; transition: transform 0.2s; }
+.hero-buttons a:hover { transform: scale(1.05); }
+.card:hover { transform: translateY(-5px); transition: transform 0.3s; }
+
+@media (max-width:768px) {
+    .hero-section { height:80vh; background-position:center top; }
+    .hero-buttons { top:10px; right:10px; }
+    .hero-content h1 { font-size:2rem; }
+    .hero-content p { font-size:1rem; }
+}
+
+@keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-buttons">
+        {% if user.is_authenticated %}
+            <a href="{% url 'movie_list' %}" class="btn btn-outline-light">Movies</a>
+            {% if user.is_superuser %}
+                <a href="/admin/" class="btn btn-warning">Admin Panel</a>
+            {% endif %}
+            <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-outline-light">Login</a>
+            <a href="{% url 'register' %}" class="btn btn-success">Register</a>
+        {% endif %}
+    </div>
+
+    <div class="hero-content">
+        <h1 class="display-3 mb-3">Welcome to <strong>MovieFlex</strong></h1>
+        <p class="lead mb-4">Browse movies, select showtimes, and book your tickets instantly!</p>
+        <a href="{% url 'movie_list' %}" class="btn btn-primary btn-lg">Explore Movies</a>
+    </div>
+</div>
+
+<!-- Featured Movies Section -->
+<div class="container mt-5">
+    <h2 class="mb-4 text-center">🎬 Featured Movies</h2>
+    <div class="row">
+        {% if movies %}
+            {% for movie in movies|slice:":3" %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    {% if movie.poster %}
+                        <img src="{{ movie.poster }}" class="card-img-top" alt="{{ movie.title }}">
+                    {% else %}
+                        <img src="{% static 'movieflex/default_poster.jpg' %}" class="card-img-top" alt="No poster">
+                    {% endif %}
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ movie.title }}</h5>
+                        <p class="card-text">
+                            <strong>Type:</strong> {{ movie.type }}
+                            {% if movie.duration %}| <strong>Duration:</strong> {{ movie.duration }} mins{% endif %}
+                        </p>
+
+                        {% if movie.available_seats %}
+                        <ul class="list-group list-group-flush mb-3">
+                            {% for st, seats in movie.available_seats.items %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ st }}
+                                <span class="badge bg-secondary">Seats available: {{ seats }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+
+                        <a href="{% url 'booking_add' movie.movie_id %}" class="btn btn-success mt-auto">Book Now</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center">No movies available at the moment.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

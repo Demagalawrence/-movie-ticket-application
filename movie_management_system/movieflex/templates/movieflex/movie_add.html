@@ -1,0 +1,48 @@
+{% extends 'movieflex/base.html' %}
+{% load static %}
+{% block title %}Add Movie - MovieFlex{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <h2 class="mb-4">➕ Add New Movie</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- Movie Title -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Movie Title</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+
+            <!-- Movie Type / Genre -->
+            <div class="mb-3">
+                <label for="type" class="form-label">Type / Genre</label>
+                <input type="text" class="form-control" id="type" name="type" placeholder="e.g., Action, Comedy" required>
+            </div>
+
+            <!-- Duration -->
+            <div class="mb-3">
+                <label for="duration" class="form-label">Duration (minutes)</label>
+                <input type="number" class="form-control" id="duration" name="duration" min="1" required>
+            </div>
+
+            <!-- Showtimes -->
+            <div class="mb-3">
+                <label for="showtimes" class="form-label">Showtimes (comma-separated)</label>
+                <input type="text" class="form-control" id="showtimes" name="showtimes" placeholder="13:00, 16:00, 19:00" required>
+            </div>
+
+            <!-- Poster URL -->
+            <div class="mb-3">
+                <label for="poster" class="form-label">Poster URL</label>
+                <input type="url" class="form-control" id="poster" name="poster" placeholder="https://example.com/poster.jpg">
+                <small class="text-muted">Optional. Use an online image URL.</small>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Movie</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

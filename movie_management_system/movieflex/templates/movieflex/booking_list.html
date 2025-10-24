@@ -1,0 +1,60 @@
+{% extends 'movieflex/base.html' %}
+{% block title %}My Bookings - MovieFlex{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>My Bookings</h2>
+    <a href="{% url 'movie_list' %}" class="btn btn-primary">Book New Movie</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Movie</th>
+                <th>Showtime</th>
+                <th>Seats</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.movie_title }}</td>
+                <td>{{ booking.showtime }}</td>
+                <td>
+                    {% if booking.seats_list %}
+                        {{ booking.seats_list|join:", " }}
+                    {% else %}
+                        {{ booking.seats_booked }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if booking.status_label == "Pending" %}
+                        <span class="badge bg-warning text-dark">{{ booking.status_label }}</span>
+                    {% elif booking.status_label == "Confirmed" %}
+                        <span class="badge bg-success">{{ booking.status_label }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">{{ booking.status_label }}</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if booking.status_label == "Pending" %}
+                        <a href="{% url 'booking_payment' booking.booking_id %}" class="btn btn-sm btn-primary">Pay</a>
+                    {% elif booking.status_label == "Confirmed" %}
+                        <a href="{% url 'ticket_download' booking.booking_id %}" class="btn btn-sm btn-success">Download Ticket</a>
+                    {% else %}
+                        <span class="text-muted">N/A</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center">No bookings yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
