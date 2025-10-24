@@ -13,7 +13,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'movieflex/style.css' %}">
 </head>
-<body class="bg-dark text-white">
+<body class="{% block body_class %}bg-dark text-white{% endblock %}">
     <nav class="navbar navbar-expand-lg navbar-dark gradient-navbar mb-4">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">HOME</a>
