@@ -9,6 +9,7 @@ from .forms import BookingForm
 import qrcode
 import stripe
 from django.conf import settings
+import os
 from django.core.mail import EmailMessage
 import io
 from django.urls import reverse
@@ -97,8 +98,28 @@ def movie_add(request):
         title = request.POST.get('title')
         type_ = request.POST.get('type')
         duration = request.POST.get('duration')
-        showtimes = request.POST.getlist('showtimes')
+        showtimes_str = request.POST.get('showtimes', '')
+        showtimes = [s.strip() for s in showtimes_str.split(',') if s.strip()]
         poster_url = request.POST.get('poster')  # field for image URL
+
+        # ✅ handle optional file upload
+        poster_file = request.FILES.get('poster_file')
+        if poster_file:
+            posters_dir = os.path.join(settings.MEDIA_ROOT, 'posters')
+            os.makedirs(posters_dir, exist_ok=True)
+            filename = poster_file.name
+            save_path = os.path.join(posters_dir, filename)
+            # Ensure unique filename
+            base, ext = os.path.splitext(filename)
+            counter = 1
+            while os.path.exists(save_path):
+                filename = f"{base}_{counter}{ext}"
+                save_path = os.path.join(posters_dir, filename)
+                counter += 1
+            with open(save_path, 'wb+') as destination:
+                for chunk in poster_file.chunks():
+                    destination.write(chunk)
+            poster_url = settings.MEDIA_URL + 'posters/' + filename
 
         # ✅ create an auto-increment movie_id
         next_id = (Movie.objects.order_by('-movie_id').first().movie_id + 1) if Movie.objects.count() > 0 else 1
@@ -122,6 +143,88 @@ def movie_add(request):
     return render(request, 'movieflex/movie_add.html')
 
 
+# ---------------- Edit Movie (Admin Only) ----------------
+@login_required_mongo
+def movie_edit(request, movie_id):
+    if not request.user.is_staff:
+        messages.error(request, "Unauthorized access! Only admins can edit movies.")
+        return redirect('movie_list')
+
+    try:
+        movie = Movie.objects.get(movie_id=int(movie_id))
+    except DoesNotExist:
+        raise Http404("Movie not found")
+
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        type_ = request.POST.get('type')
+        duration = request.POST.get('duration')
+        showtimes_str = request.POST.get('showtimes', '')
+        poster_url = request.POST.get('poster')
+
+        # optional new uploaded file overrides URL
+        poster_file = request.FILES.get('poster_file')
+        if poster_file:
+            posters_dir = os.path.join(settings.MEDIA_ROOT, 'posters')
+            os.makedirs(posters_dir, exist_ok=True)
+            filename = poster_file.name
+            save_path = os.path.join(posters_dir, filename)
+            base, ext = os.path.splitext(filename)
+            counter = 1
+            while os.path.exists(save_path):
+                filename = f"{base}_{counter}{ext}"
+                save_path = os.path.join(posters_dir, filename)
+                counter += 1
+            with open(save_path, 'wb+') as destination:
+                for chunk in poster_file.chunks():
+                    destination.write(chunk)
+            poster_url = settings.MEDIA_URL + 'posters/' + filename
+
+        new_showtimes = [s.strip() for s in showtimes_str.split(',') if s.strip()]
+
+        movie.title = title
+        movie.type = type_
+        movie.duration = int(duration) if duration else None
+        movie.showtimes = new_showtimes
+        movie.poster = poster_url
+
+        # Rebuild available_seats baseline for listed showtimes
+        booked_map = getattr(movie, 'booked_seats', {}) or {}
+        movie.available_seats = {st: max(0, 30 - len(booked_map.get(st, []))) for st in new_showtimes}
+
+        movie.save()
+        messages.success(request, f"Movie '{title}' updated successfully!")
+        return redirect('movie_list')
+
+    # Prefill values for form
+    context = {
+        'movie': movie,
+        'initial_showtimes': ', '.join(movie.showtimes or []),
+    }
+    return render(request, 'movieflex/movie_edit.html', context)
+
+
+# ---------------- Delete Movie (Admin Only) ----------------
+@login_required_mongo
+def movie_delete(request, movie_id):
+    if not request.user.is_staff:
+        messages.error(request, "Unauthorized access! Only admins can delete movies.")
+        return redirect('movie_list')
+
+    try:
+        movie = Movie.objects.get(movie_id=int(movie_id))
+    except DoesNotExist:
+        raise Http404("Movie not found")
+
+    if request.method == 'POST':
+        title = movie.title
+        movie.delete()
+        messages.info(request, f"Movie '{title}' deleted.")
+        return redirect('movie_list')
+
+    return render(request, 'movieflex/movie_delete_confirm.html', {'movie': movie})
+
+
 # ---------------- Logout ----------------
 @login_required
 def user_logout(request):
@@ -131,7 +234,23 @@ def user_logout(request):
 # ---------------- Movie List ----------------
 @login_required_mongo
 def movie_list(request):
-    movies = Movie.objects.all()
+    # Query params for search & filter
+    q = (request.GET.get('q') or '').strip()
+    selected_genre = (request.GET.get('genre') or '').strip()
+
+    qs = Movie.objects
+    if q:
+        qs = qs(title__icontains=q)
+    if selected_genre and selected_genre.lower() != 'all':
+        qs = qs(type=selected_genre)
+
+    movies = qs.all()
+
+    # Distinct genre list for filter dropdown
+    try:
+        genres = sorted([g for g in (Movie.objects.distinct('type') or []) if g])
+    except Exception:
+        genres = []
     for movie in movies:
         # Normalize available_seats to a dict for safe template rendering
         showtimes = list(getattr(movie, 'showtimes', []) or [])
@@ -155,7 +274,12 @@ def movie_list(request):
         # Assign normalized dict to the instance for the template to use
         movie.available_seats = normalized
         movie.seats_list = [(st, normalized.get(st, 0)) for st in showtimes]
-    return render(request, 'movieflex/movie_list.html', {'movies': movies})
+    return render(request, 'movieflex/movie_list.html', {
+        'movies': movies,
+        'genres': genres,
+        'q': q,
+        'selected_genre': selected_genre or 'all',
+    })
 
 # ---------------- Booking List ----------------
 @login_required_mongo

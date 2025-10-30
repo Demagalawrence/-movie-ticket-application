@@ -8,17 +8,67 @@ body {
     min-height: 100vh;
 }
 
+/* Home page: use provided image as full-page background */
+body.bg-home-image {
+    background: url('/static/movieflex/back.webp') no-repeat center center fixed !important;
+    background-size: cover !important;
+}
+
+/* Movies page gradient background (blue → purple) */
+.bg-gradient-movies {
+    background:
+      radial-gradient(120px 120px at 20% 15%, rgba(255,255,255,0.16), rgba(255,255,255,0) 60%),
+      radial-gradient(100px 100px at 70% 30%, rgba(255,255,255,0.12), rgba(255,255,255,0) 60%),
+      radial-gradient(110px 110px at 40% 70%, rgba(255,255,255,0.10), rgba(255,255,255,0) 60%),
+      radial-gradient(130px 130px at 85% 80%, rgba(255,255,255,0.14), rgba(255,255,255,0) 60%),
+      linear-gradient(135deg, #4f46e5 0%, #6366f1 40%, #8b5cf6 100%) !important;
+}
+
+/* Pill search styling */
+.search-pill-wrap { position: relative; display: inline-block; width: 320px; max-width: 60vw; }
+.search-pill {
+    background-color: #ffffff !important;
+    color: #111 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 9999px !important; /* full pill */
+    padding-left: 1rem !important;
+    padding-right: 2.5rem !important; /* room for icon */
+    height: 44px; /* consistent height */
+    box-shadow: 0 8px 24px rgba(96,165,250,0.25), 0 2px 6px rgba(96,165,250,0.2) !important; /* blue soft */
+}
+.search-pill::placeholder { color: #6b7280 !important; }
+.search-pill:focus {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 0.2rem rgba(96,165,250,0.25) !important;
+}
+.search-pill-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
 /* Gradient Navbar - Modern Look */
 .gradient-navbar {
     background: linear-gradient(90deg, #0f172a, #1e40af) !important; /* dark to blue gradient */
-    padding: 0.8rem 1rem;
+    padding: 1.1rem 1.25rem; /* taller navbar */
+    min-height: 64px; /* ensure height */
+    align-items: center;
 }
 
 .gradient-navbar .navbar-brand,
 .gradient-navbar .nav-link {
     color: #fef3c7 !important;  /* soft yellow */
-    font-weight: bold;
+    font-weight: 700;
+    font-size: 1.05rem; /* larger text */
 }
+
+.gradient-navbar .navbar-brand { letter-spacing: 0.5px; }
+.gradient-navbar .nav-link { padding: 0.4rem 0.6rem; margin-left: 0.25rem; }
 
 .gradient-navbar .nav-link:hover {
     color: #60a5fa !important;  /* sky blue on hover */
@@ -41,6 +91,64 @@ body {
 .card:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 16px rgba(0,0,0,0.7);
+}
+
+/* Rotating emerald glow around card */
+.card-emerald-rotate {
+    position: relative;
+    overflow: visible;
+}
+.card-emerald-rotate::before {
+    content: "";
+    position: absolute;
+    inset: -2px; /* sit just outside the card edges */
+    border-radius: 14px;
+    /* A bright spot that travels around the border */
+    background: radial-gradient(circle, rgba(16,185,129,0.95) 0%, rgba(16,185,129,0.45) 30%, rgba(16,185,129,0) 60%);
+    background-repeat: no-repeat;
+    background-size: 120% 120%;
+    background-position: 0% 0%;
+    padding: 3px; /* ring thickness */
+    /* Show only the ring by masking out the middle */
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; /* Safari/Chrome */
+            mask-composite: exclude; /* Firefox */
+    z-index: 0;
+    animation: cornerSweep 4s linear infinite;
+    pointer-events: none;
+}
+.card-emerald-rotate > * { position: relative; z-index: 1; }
+
+@keyframes cornerSweep {
+  0%   { background-position: 0%   0%; }
+  25%  { background-position: 100% 0%; }
+  50%  { background-position: 100% 100%; }
+  75%  { background-position: 0%   100%; }
+  100% { background-position: 0%   0%; }
+}
+
+/* Light blue box-shadow utility for cards */
+.card-shadow-blue {
+    box-shadow: 0 10px 24px rgba(96,165,250,0.35), 0 4px 10px rgba(96,165,250,0.25) !important;
+}
+
+.card-shadow-blue:hover {
+    box-shadow: 0 18px 48px rgba(96,165,250,0.55), 0 8px 20px rgba(96,165,250,0.35) !important;
+}
+
+/* Green ring for buttons */
+.btn-ring-green,
+a.btn-ring-green {
+    border-color: #10b981 !important; /* emerald */
+}
+
+.btn-ring-green:hover,
+.btn-ring-green:focus,
+a.btn-ring-green:hover,
+a.btn-ring-green:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 0.25rem rgba(16,185,129,0.35) !important;
 }
 
 /* Buttons */
@@ -83,15 +191,35 @@ a.btn-success:hover {
 .form-control {
     background-color: #1a1a1a !important;
     color: #fff !important;
-    border: 1px solid #333 !important;
+    border: 1px solid #4a4a4a !important; /* slightly lighter for visibility */
     border-radius: 5px;
 }
 
 .form-control:focus {
     background-color: #1a1a1a !important;
     color: #fff !important;
-    border-color: #007bff !important;
+    border-color: #60a5fa !important; /* lighter blue */
     box-shadow: 0 0 5px rgba(0,123,255,0.5);
+}
+
+/* Make placeholder text readable on dark backgrounds */
+.form-control::placeholder {
+    color: #c7c7c7 !important;
+    opacity: 1; /* Firefox */
+}
+
+/* White search input variant for dark pages */
+.search-light {
+    background-color: #ffffff !important;
+    color: #111 !important;
+    border: 1px solid #e5e7eb !important; /* light gray */
+}
+.search-light::placeholder {
+    color: #6b7280 !important; /* gray-500 */
+}
+.search-light:focus {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 0.2rem rgba(96,165,250,0.25) !important;
 }
 
 /* Alerts */
@@ -131,4 +259,45 @@ footer {
     color: #aaa !important;
     padding: 1rem 0;
     text-align: center;
+}
+
+/* Dim/Opacity Card that blends with page background */
+.card-dim {
+    background-color: rgba(26,26,26,0.7) !important; /* default for dark pages */
+    border-color: rgba(255,255,255,0.08) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45) !important;
+    backdrop-filter: blur(6px);
+}
+
+/* When page background is light (login, edit page), make card semi-opaque white */
+body.bg-white.text-dark .card.card-dim {
+    background-color: rgba(255,255,255,0.85) !important;
+    color: #111 !important;
+    border-color: rgba(0,0,0,0.08) !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15) !important;
+}
+
+/* Green glow utility for cards */
+.card-glow-green {
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35), 0 2px 6px rgba(16, 185, 129, 0.25) !important; /* emerald-like */
+}
+
+/* --- Overrides to ensure search pill displays as designed --- */
+.search-pill-wrap { display: inline-flex; align-items: center; }
+.form-control.search-pill {
+    background-color: #ffffff !important;
+    color: #111 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 9999px !important;
+    padding-left: 1rem !important;
+    padding-right: 2.5rem !important;
+    height: 44px !important;
+    box-shadow: 0 8px 24px rgba(96,165,250,0.25), 0 2px 6px rgba(96,165,250,0.2) !important;
+}
+.form-control.search-pill::placeholder { color: #6b7280 !important; }
+.form-control.search-pill:focus {
+    background-color: #ffffff !important;
+    color: #111 !important;
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 0.2rem rgba(96,165,250,0.25) !important;
 }

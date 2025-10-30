@@ -13,6 +13,8 @@ urlpatterns = [
 
     # Movies
     path('movies/', views.movie_list, name='movie_list'),
+    path('movies/<int:movie_id>/edit/', views.movie_edit, name='movie_edit'),
+    path('movies/<int:movie_id>/delete/', views.movie_delete, name='movie_delete'),
 
     # Bookings
     path('bookings/', views.booking_list, name='booking_list'),

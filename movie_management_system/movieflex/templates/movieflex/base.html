@@ -13,7 +13,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'movieflex/style.css' %}">
 </head>
-<body class="{% block body_class %}bg-dark text-white{% endblock %}">
+<body class="{% block body_class %}bg-white text-dark{% endblock %}">
     <nav class="navbar navbar-expand-lg navbar-dark gradient-navbar mb-4">
         <div class="container">
             <a class="navbar-brand" href="{% url 'home' %}">HOME</a>
@@ -36,7 +36,6 @@
                         {% endif %}
 
                     {% else %}
-                        <a href="/admin/" class="btn btn-warning me-2">Admin Panel</a>
                         <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
                     {% endif %}

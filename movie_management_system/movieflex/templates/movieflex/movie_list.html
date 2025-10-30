@@ -1,19 +1,62 @@
 {% extends 'movieflex/base.html' %}
 {% load static %}
 {% block title %}Movies - MovieFlex{% endblock %}
+{% block body_class %}bg-white text-dark{% endblock %}
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <h2>🎬 Available Movies</h2>
-    
+    <form id="filterForm" method="get" class="d-flex gap-2" role="search">
+        <div class="search-pill-wrap">
+            <input
+                type="text"
+                class="form-control search-pill"
+                name="q" id="qInput"
+                placeholder="Search by title..."
+                value="{{ q|default:'' }}"
+            />
+            <svg class="search-pill-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M21 21l-4.35-4.35" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="11" cy="11" r="7" stroke="#2563eb" stroke-width="2"/>
+            </svg>
+        </div>
+        <select name="genre" id="genreSelect" class="form-select">
+            <option value="all" {% if selected_genre == 'all' %}selected{% endif %}>All Genres</option>
+            {% for g in genres %}
+                <option value="{{ g }}" {% if selected_genre == g %}selected{% endif %}>{{ g }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-primary" type="submit">Filter</button>
+        <a class="btn btn-secondary text-white" href="{% url 'movie_list' %}">Reset</a>
+    </form>
 
 </div>
+
+<script>
+  (function() {
+    const form = document.getElementById('filterForm');
+    if (!form) return;
+    const q = document.getElementById('qInput');
+    const genre = document.getElementById('genreSelect');
+    let t;
+    const submitDebounced = () => {
+      clearTimeout(t);
+      t = setTimeout(() => {
+        if (form.requestSubmit) form.requestSubmit(); else form.submit();
+      }, 300);
+    };
+    if (q) q.addEventListener('input', submitDebounced);
+    if (genre) genre.addEventListener('change', () => {
+      if (form.requestSubmit) form.requestSubmit(); else form.submit();
+    });
+  })();
+</script>
 
 <div class="row">
     {% if movies %}
         {% for movie in movies %}
         <div class="col-md-4 mb-4">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 shadow-sm card-emerald-rotate card-shadow-blue">
                 {% if movie.poster %}
                     <img src="{{ movie.poster }}" class="card-img-top" alt="{{ movie.title }}">
                 {% else %}
@@ -42,7 +85,17 @@
                     </ul>
                     {% endif %}
 
-                    <a href="{% url 'booking_add' movie.movie_id %}" class="btn btn-success mt-auto">Book Now</a>
+                    <div class="d-flex gap-2 mt-auto">
+                        {% if request.user.is_authenticated %}
+                            <a href="{% url 'booking_add' movie.movie_id %}" class="btn btn-success">Book Now</a>
+                        {% else %}
+                            <a href="{% url 'login' %}?next={% url 'booking_add' movie.movie_id %}" class="btn btn-success">Book Now</a>
+                        {% endif %}
+                        {% if request.user.is_staff %}
+                            <a href="{% url 'movie_edit' movie.movie_id %}" class="btn btn-warning">Edit</a>
+                            <a href="{% url 'movie_delete' movie.movie_id %}" class="btn btn-danger">Delete</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
