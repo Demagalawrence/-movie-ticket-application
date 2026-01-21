@@ -8,7 +8,7 @@
     <form method="post" id="bookingForm">
         {% csrf_token %}
         <div class="mb-3">
-            <label for="showtime" class="form-label">Showtime:</label>
+            <label for="showtime" class="form-label">Show time:</label>
             {{ form.showtime|add_class:"form-select" }}
         </div>
 
