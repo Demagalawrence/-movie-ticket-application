@@ -122,7 +122,7 @@ Files will be gathered into `movie_management_system/staticfiles/`.
 - Do not commit real secrets. Use environment variables or a secrets manager.
 - Use a proper WSGI/ASGI server (gunicorn/uvicorn+daphne) behind a reverse proxy.
 - Use a persistent session backend (cache/DB) for multi-instance deployments.
-- Configure MongoDB with credentials, TLS, and timeouts.
+
 
 ## License
 Add your preferred license here (e.g., MIT).
