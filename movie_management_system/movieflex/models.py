@@ -1,7 +1,7 @@
 from mongoengine import Document, StringField, IntField, ListField, DictField
 
 # -----------------------------
-# Movies Collection
+# Movies Collections model 
 # -----------------------------
 class Movie(Document):
     movie_id = IntField(required=True, unique=True)  # optional: auto-generate in code
