@@ -33,7 +33,7 @@ def login_required_mongo(view_func):
     return wrapper
 
 
-# ---------------- Registration ----------------
+# ---------------- Registration section ----------------
 def register(request):
     if request.method == 'POST':
         username = request.POST.get('username')
