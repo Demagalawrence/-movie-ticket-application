@@ -59,7 +59,7 @@ def register(request):
 
     return render(request, 'movieflex/register.html')
 
-# ---------------- Login ----------------
+# ---------------- Login section----------------
 def user_login(request):
     if request.method == 'POST':
         user_input = request.POST.get('user')  # username or email
