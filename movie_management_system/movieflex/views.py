@@ -84,7 +84,7 @@ def user_login(request):
     return render(request, 'movieflex/login.html')
 
 
-# ---------------- Add Movie (Admin Only) ----------------
+# ---------------- Add Movie (Admin Only.) ----------------
 @login_required_mongo
 
 def movie_add(request):
