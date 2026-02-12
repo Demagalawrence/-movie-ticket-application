@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Movie, Booking  # MongoDB models
+from .models import Movie, Booking  # MongoDB models setup
 from .forms import BookingForm
 import qrcode
 import stripe
