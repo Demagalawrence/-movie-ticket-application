@@ -143,7 +143,7 @@ def movie_add(request):
     return render(request, 'movieflex/movie_add.html')
 
 
-# ---------------- Edit Movie (Admin Only) ----------------
+# ---------------- Edit Movie (Admin Only.) ----------------
 @login_required_mongo
 def movie_edit(request, movie_id):
     if not request.user.is_staff:
