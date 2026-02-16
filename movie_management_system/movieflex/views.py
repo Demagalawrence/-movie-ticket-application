@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login as django_login, logout as django_logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .models import Movie, Booking  # MongoDB models setup
+from .models import Movie, Booking  ppppppppppp# MongoDB models setup
 from .forms import BookingForm
 import qrcode
 import stripe
@@ -19,7 +19,7 @@ from mongoengine.errors import DoesNotExist
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-# ---------------- Home section ----------------
+# ---------------- Home section. ----------------
 def home(request):
     movies = list(Movie.objects())
     return render(request, 'movieflex/home.html', {'movies': movies})
