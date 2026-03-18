@@ -2,7 +2,7 @@ from mongoengine import Document, StringField, IntField, ListField, DictField
 
 # ----------------------------
 # Movies Collections model 
-# ----------------------------
+# ---------------------------
 class Movie(Document):
     movie_id = IntField(required=True, unique=True)  # optional: auto-generate in code
     title = StringField(required=True, max_length=200)
