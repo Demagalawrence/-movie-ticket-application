@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from .models import Movie, Booking
 
-# -----------------------------
+# ----------------------------
 # User Registrations Form (SQLite)
 # --------------------------
 class UserRegistrationForm(forms.ModelForm):
