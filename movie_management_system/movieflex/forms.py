@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from .models import Movie, Booking
 
 # ----------------------------
-# User Registrations Form (SQLite)
+# User Registrations Forms (SQLite)
 # --------------------------
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(
