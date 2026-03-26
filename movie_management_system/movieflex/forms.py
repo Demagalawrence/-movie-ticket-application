@@ -5,7 +5,7 @@ from .models import Movie, Booking
 
 # ----------------------------
 # User Registrations Forms (SQLite)
-# --------------------------
+# -------------------------
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
