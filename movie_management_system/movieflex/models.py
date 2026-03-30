@@ -1,6 +1,6 @@
 from mongoengine import Document, StringField, IntField, ListField, DictField
 
-# -------------------------
+# ------------------------
 # Movies Collections model 
 # -------------------------
 class Movie(Document):
