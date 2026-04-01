@@ -19,7 +19,7 @@ from mongoengine.errors import DoesNotExist
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-# ---------------- Home section ---------
+# ---------------- Home section --------
 
 def home(request):
     movies = list(Movie.objects())
