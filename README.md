@@ -2,6 +2,27 @@
 
 A Django-based movie ticket booking application. Uses SQLite for Django auth/admin and MongoDB (via MongoEngine) for application data. Integrates Stripe for payments and supports QR code generation for tickets.
 
+Table of Contents
+[Prerequisites](#Prerequisites)
+
+[Quick Start](#Quick-Start)
+
+[Project Structure](#Project-Structure)
+
+[Configuration](#Configuration)
+
+[Environment Variables (Recommended)](#Environment-Variables-(Recommended))
+
+[Static Files](#Static-Files)
+
+[Common Commands](#Common-Commands)
+
+[Troubleshooting](#Troubleshooting)
+
+[Production Notes](#Production-Notes)
+
+[License](#License)
+
 ## Prerequisites
 - Python 3.11+ (recommended)
 - Git
